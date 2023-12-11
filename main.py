@@ -1,9 +1,11 @@
 import argparse
 import os
 import requests
+import sys
 
 from bs4 import BeautifulSoup
 from termcolor import colored
+from time import sleep
 
 def stage(time):
     FINAL_TEXT = ['FINAL', 'FINAL/OT', 'FINAL/SO']
@@ -22,6 +24,7 @@ def main(feed):
     SELECTOR = 'li[data-carousel-item="true"]'
    
     response = requests.get(URL)
+    os.system('clear')
     soup = BeautifulSoup(response.content, 'html.parser')
     schedule = soup.select(SELECTOR)
     for game in schedule:
@@ -37,8 +40,8 @@ def main(feed):
                 if game_stage == 'FINAL' or game_stage == 'IN_PORGRESS':
                     scores = datas[10].find_all('div')
                     home_score = scores[12].text
-                    away_score = scores[3].text
-                    visitor = f'{away_score} {visitor}'
+                    visitor_score = scores[3].text
+                    visitor = f'{visitor_score} {visitor}'
                     home = f'{home_score} {home}'
                 
                 game_info = f'{time} {network} - {visitor} at {home}'
@@ -47,8 +50,15 @@ def main(feed):
                 pass
 
 if __name__ == '__main__':
-    os.system('clear')
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--feed', '-f', type=str, default='nfl')
-    args = parser.parse_args()
-    main(args.feed)
+    while True:
+        try:
+            os.system('clear')
+            print('Getting scores...')
+            parser = argparse.ArgumentParser()
+            parser.add_argument('--feed', '-f', type=str, default='nfl')
+            args = parser.parse_args()
+            main(args.feed)
+            sleep(30)
+        except KeyboardInterrupt:
+            print('\r\nexiting...')
+            sys.exit(0)

@@ -1,11 +1,15 @@
 import argparse
+import operator
 import os
 import requests
 import sys
 
 from bs4 import BeautifulSoup
+from game import Game
 from termcolor import colored
 from time import sleep
+from utils.banner import print_banner
+from utils.feed import get_feed
 
 def stage(time):
     FINAL_TEXT = ['FINAL', 'FINAL/OT', 'FINAL/SO']
@@ -19,46 +23,63 @@ def stage(time):
     
     return 'NOT_STARTED','light_grey'
 
-def main(feed):
+def main(args):
+    feed = get_feed(args.feed)
     URL = f'https://sports.yahoo.com/{feed}'
     SELECTOR = 'li[data-carousel-item="true"]'
-   
+    Game.reset_games()
+
     response = requests.get(URL)
     os.system('clear')
+    print_banner(args)
+    
     soup = BeautifulSoup(response.content, 'html.parser')
     schedule = soup.select(SELECTOR)
-    for game in schedule:
-        if game:
+
+    for item in schedule:
+        if item:
             try:
-                datas = game.find_all('div')
+                datas = item.find_all('div')
                 time = datas[7].text
                 network = datas[9].text
                 visitor = datas[18].span.text
                 home = datas[27].span.text
-                game_stage, color = stage(time)
+                game = Game(home, visitor, network, time)
 
-                if game_stage == 'FINAL' or game_stage == 'IN_PORGRESS':
+                if game.stage == 'FINAL' or game.stage == 'IN_PROGRESS':
                     scores = datas[10].find_all('div')
-                    home_score = scores[12].text
-                    visitor_score = scores[3].text
-                    visitor = f'{visitor_score} {visitor}'
-                    home = f'{home_score} {home}'
-                
-                game_info = f'{time} {network} - {visitor} at {home}'
-                print(colored(game_info, color))
+                    game.home_score = scores[12].text
+                    game.visiting_score = scores[3].text
+                    
             except IndexError as e:
                 pass
+    return Game.all_games
 
 if __name__ == '__main__':
     while True:
         try:
             os.system('clear')
-            print('Getting scores...')
             parser = argparse.ArgumentParser()
-            parser.add_argument('--feed', '-f', type=str, default='nfl')
+            parser.add_argument('--feed', '-f', type=str, default='NFL', choices=['nba', 'nfl', 'college basketball', 'ncaam', 'nhl', 'ncaaw', 'tennis'])
+            parser.add_argument('--loop', '-l', action='count', default=0)
+            parser.add_argument('--wait', '-w', type=int, default=15, required=False)
             args = parser.parse_args()
-            main(args.feed)
-            sleep(30)
+            
+            print_banner(args)
+            print('Getting scores...')
+            
+            games = main(args)
+            sorted_games = sorted(games, key=operator.attrgetter('stage'))
+            for game in sorted_games:
+                print_attrs = []
+                if game.stage == 'FINAL': print_attrs.append('dark')
+
+                print(colored(str(game), game.color, attrs=print_attrs))
+            if args.loop:
+                sleep(args.wait)
+            else:
+                sys.exit(0)
+
         except KeyboardInterrupt:
             print('\r\nexiting...')
             sys.exit(0)

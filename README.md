@@ -22,8 +22,8 @@ source env/bin/activate
 usage:
 ```shell
 # scrape nhl scores and refresh every 30 seconds
-python main.py --feed nhl --loop --wait 30
+python score_scraper.py --league nhl --loop --wait 30
 
 # scrape nba score and refresh deafult 15 seconds
-python main.py --feed nba --loop
+python score_scraper.py -league nba --loop
 ```

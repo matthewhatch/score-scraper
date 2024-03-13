@@ -5,7 +5,7 @@ import requests
 import sys
 
 from bs4 import BeautifulSoup
-from game import Game
+from classes.game import Game
 from termcolor import colored
 from time import sleep
 from utils.banner import print_banner
@@ -51,8 +51,9 @@ def main(args):
                     game.home_score = scores[12].text
                     game.visiting_score = scores[3].text
                     
-            except IndexError as e:
+            except IndexError:
                 pass
+
     return Game.all_games
 
 if __name__ == '__main__':

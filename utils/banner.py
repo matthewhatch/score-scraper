@@ -1,10 +1,23 @@
+from datetime import datetime
 from termcolor import colored
 from utils.feed import get_feed
 
 def print_banner(args):
-    refresh = ''
-    if args.loop:
-        refresh = f'refresh: {args.wait}s'
+    current_time = f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
+    league = None
+    if hasattr(args, 'league'):
+        league = args.league.upper()
+    
+    if hasattr(args, 'feed'):
+        league = args.feed.upper()
+
+    metadata = f'''
+League: {league}
+Time: {current_time}
+'''
+    
+    if hasattr(args, 'loop'):
+        metadata += f'''Refresh: {args.wait}s\r\n'''
 
     banner = f'''
  _____                      _____                                
@@ -18,9 +31,8 @@ def print_banner(args):
           
 Getting Sports Scores From Yahoo! Sports
 -----------------------------------------------------------------
-feed: {args.feed.upper()}
-{refresh}
+{metadata}
 -----------------------------------------------------------------
-    '''
+'''
 
     print(colored(banner, 'cyan'))

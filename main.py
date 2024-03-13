@@ -25,10 +25,11 @@ def stage(time):
 
 def main(args):
     feed = get_feed(args.feed)
-    URL = f'https://sports.yahoo.com/{feed}'
+    # what is going on with the get_feed?  I must have been in the middle of something and forgot to finish
+    URL = f'https://sports.yahoo.com/{args.feed}'
     SELECTOR = 'li[data-carousel-item="true"]'
     Game.reset_games()
-
+    print('Getting URL', URL)
     response = requests.get(URL)
     os.system('clear')
     print_banner(args)

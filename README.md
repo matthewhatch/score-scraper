@@ -9,11 +9,21 @@
                                                 | |              
                                                 |_|              
           
-Author: C0d3f@th3rS
+```
+Scraping Score from Yahoo! Sports. Its faster than waiting for the ticker
+install:
+```shell
+git clone git@github.com:matthewhatch/score-scraper.git
+cd score-scraper
+python -m venv env
+source env/bin/activate
 ```
 
 usage:
 ```shell
 # scrape nhl scores and refresh every 30 seconds
 python main.py --feed nhl --loop --wait 30
+
+# scrape nba score and refresh deafult 15 seconds
+python main.py --feed nba --loop
 ```

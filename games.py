@@ -58,8 +58,8 @@ def get_games(games):
 
         print(colored(str(game), color, attrs=attrs))
 
-def scrape(league):
-    URL = get_feed(league.upper())
+def scrape(league, date='next_real'):
+    URL = get_feed(league.upper(), date)
     response = requests.get(URL)
     content = json.loads(response.content)
 

@@ -1,11 +1,10 @@
 import json
 import requests
 
-from classes.nfl_game import NflGame
+from classes.game import Game
 from classes.player import Player
 from classes.team import Team
 from termcolor import colored
-from utils.constants import NFL_FEED
 from utils.feed import get_feed
 
 def get_teams(teams):
@@ -43,9 +42,9 @@ def get_games(games):
         status_display = game['status_display_name']
         last_updated = game['last_updated']
 
-        NflGame(id, home_team, away_team, network, time, home_score, away_score, status, status_display, last_updated, False)
+        Game(id, home_team, away_team, network, time, home_score, away_score, status, status_display, last_updated, False)
 
-    for game in NflGame.all_games:
+    for game in Game.all_games:
         attrs = []
         color = 'light_grey'
 

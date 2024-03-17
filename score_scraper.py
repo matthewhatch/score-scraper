@@ -4,7 +4,7 @@ import sys
 
 from time import sleep
 from utils.banner import print_banner
-import nfl
+import games
 
 if __name__ == '__main__':
     while True:
@@ -17,7 +17,7 @@ if __name__ == '__main__':
             args = parser.parse_args()
 
             print_banner(args)
-            nfl.scrape(args.league)
+            games.scrape(args.league)
             
             if args.loop:
                 sleep(args.wait)

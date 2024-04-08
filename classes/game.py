@@ -49,6 +49,4 @@ class Game:
             visitor = f'{self.visiting_score} {self.visiting_team}'
             home = f'{self.home_score} {self.home_team}'
 
-        # return f'{self.network} - {visitor} at {home}'
-        # str_value = f'{self.stage_display} {super().__str__()}'
         return f'{self.stage_display} {self.network} - {visitor} at {home}'

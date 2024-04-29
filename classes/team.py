@@ -1,4 +1,6 @@
-class Team:
+from classes.abstract_team import AbstractTeam
+
+class Team(AbstractTeam):
     all_teams = []
     def __init__(self, id, display_name, city, mascot, abbr) -> None:
         self.id = id

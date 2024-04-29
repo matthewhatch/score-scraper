@@ -5,15 +5,21 @@ from utils.feed import get_feed
 def print_banner(args):
     current_time = f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
     league = None
+    date = 'Today'
+
     if hasattr(args, 'league'):
         league = args.league.upper()
     
     if hasattr(args, 'feed'):
         league = args.feed.upper()
 
+    if hasattr(args, 'date'):
+        date = args.date
+
     metadata = f'''
 League: {league}
 Time: {current_time}
+Game Date: {date}
 '''
     
     if hasattr(args, 'loop'):

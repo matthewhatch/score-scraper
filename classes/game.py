@@ -1,7 +1,8 @@
 import datetime
+from classes.abstract_game import AbstractGame
 from utils.game import get_stage
 
-class Game:
+class Game(AbstractGame):
     all_games = []
     def __init__(self, id, home_team, visiting_team, network, time, home_score=None, visiting_score=None, stage=None, stage_display=None, last_updated=None, updated=False) -> None:
         self.id = id
@@ -13,7 +14,6 @@ class Game:
         self.visiting_score = visiting_score
         self.network = network
         self.time = time
-        # self.stage, self.color = get_stage(time)
         self.stage = stage
         self.stage_display = stage_display
         self.date = datetime.datetime.strptime(time,'%a, %d %b %Y %H:%M:%S +0000').strftime('%a %b %d')

@@ -2,9 +2,11 @@ import argparse
 import os
 import sys
 
+from classes.abstract_game import AbstractGame
+from termcolor import colored
 from time import sleep
 from utils.banner import print_banner
-from games import scrape
+from scraper import scrape
 
 if __name__ == '__main__':
     while True:
@@ -18,8 +20,22 @@ if __name__ == '__main__':
             os.system('clear')
 
             print_banner(args)
-            scrape(args.league, args.date)
-            
+            game: AbstractGame = scrape(args.league, args.date)
+                    
+            for game in game.all_games:
+                attrs = []
+                color = 'light_grey'
+
+                if game.stage.upper() == 'FINAL':
+                    color = 'green'
+
+                if game.stage.upper() == 'LIVE':
+                    color = 'light_yellow'
+                if game.updated:
+                    attrs.append('reverse')
+                print(colored(str(game), color, attrs=attrs))
+                
+
             if args.loop:
                 sleep(args.wait)
             else:

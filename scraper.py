@@ -3,16 +3,16 @@ import requests
 
 from classes.abstract_game import AbstractGame
 from classes.abstract_team import AbstractTeam
-from classes.nhl_game import NHLGame
-from classes.nhl_team import NHLTeam
-from classes.nba_team import NBATeam
-from classes.nba_game import NBAGame
-from classes.nfl_game import NFLGame
-from classes.nfl_team import NFLTeam
-from classes.mlb_team import MLBTeam
 from classes.mlb_game import MLBGame
+from classes.mlb_team import MLBTeam
+from classes.nba_game import NBAGame
+from classes.nba_team import NBATeam
 from classes.ncaab_game import NCAABGame
 from classes.ncaab_team import NCAABTeam
+from classes.nfl_game import NFLGame
+from classes.nfl_team import NFLTeam
+from classes.nhl_game import NHLGame
+from classes.nhl_team import NHLTeam
 from classes.player import Player
 from utils.feed import get_feed
 
@@ -64,17 +64,17 @@ def get_games(game_class, team_class, games) -> AbstractGame:
     return klass
 
 def scrape(league, date='next_real') -> AbstractGame:
-    URL = get_feed(league.upper(), date)
+    # URL = get_feed(league.upper(), date)
     game_class = f'{league.upper()}Game'
     team_class = f'{league.upper()}Team'
-
+    URL = globals()[game_class].URL(date)
     response = requests.get(URL)
     content = json.loads(response.content)
 
     try:
         get_teams(team_class, content['service']['scoreboard']['teams'])
     except Exception:
-        print('There are no games on the given date')
+        print(f'There are no games for date: {date}')
         exit(0)
     
     return get_games(game_class, team_class, content['service']['scoreboard']['games'])

@@ -20,6 +20,10 @@ class Game(AbstractGame):
 
         self.add_game()
 
+    @classmethod
+    def URL(self, date) -> str:
+        raise NotImplementedError('URL must be implemented')
+ 
     def add_game(self):
         # BaseGame.all_games.append(self)
         ids = [g.id for g in Game.all_games]

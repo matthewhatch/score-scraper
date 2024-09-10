@@ -14,7 +14,6 @@ from classes.nfl_team import NFLTeam
 from classes.nhl_game import NHLGame
 from classes.nhl_team import NHLTeam
 from classes.player import Player
-from utils.feed import get_feed
 
 def get_teams(team_class, teams) -> AbstractTeam:
     klass: AbstractTeam
@@ -47,6 +46,8 @@ def get_games(game_class, team_class, games) -> AbstractGame:
 
     for game in games.values():
         id = game['gameid']
+        home_team_id = game['home_team_id']
+        visiting_team_id = game['away_team_id']
         home_team = team_klass.find(game['home_team_id'])
         away_team = team_klass.find(game['away_team_id'])
         home_score =str(game['total_home_points'])
@@ -59,12 +60,11 @@ def get_games(game_class, team_class, games) -> AbstractGame:
 
         # call appropriate Game Class based on League
         klass = globals()[game_class]
-        klass(id, home_team, away_team, network, time, home_score, away_score, status, status_display, last_updated, False)
+        klass(id, home_team_id, visiting_team_id, home_team, away_team, network, time, home_score, away_score, status, status_display, last_updated, False)
     
     return klass
 
 def scrape(league, date='next_real') -> AbstractGame:
-    # URL = get_feed(league.upper(), date)
     game_class = f'{league.upper()}Game'
     team_class = f'{league.upper()}Team'
     URL = globals()[game_class].URL(date)
@@ -73,11 +73,28 @@ def scrape(league, date='next_real') -> AbstractGame:
 
     try:
         get_teams(team_class, content['service']['scoreboard']['teams'])
-    except Exception:
+    except Exception as e:
+        print(e)
         print(f'There are no games for date: {date}')
         exit(0)
     
     return get_games(game_class, team_class, content['service']['scoreboard']['games'])
+
+def scrape_roster(team_id):
+    URL = f'https://sports.yahoo.com/site/api/resource/sports.team.roster;id={team_id}'
+    response = requests.get(URL)
+    content = json.loads(response.content)
+
+    # players is an object where the keys are the players by id
+    for key in content['players'].keys():
+        player = content['players'][key]
+        id = player['player_id']
+        first_name = player['first_name']
+        last_name = player['last_name']
+        team_id = player['team_id']
+        uniform_number = player['uniform_number']
+        new_player = Player(id, first_name, last_name, team_id, uniform_number)
+        new_player.save()
 
 if __name__ == '__main__':
     scrape()

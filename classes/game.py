@@ -1,9 +1,10 @@
 from classes.abstract_game import AbstractGame
 from datetime import datetime
+from typing import List
 from utils.connection import get_connection, close_connection
 
 class Game(AbstractGame):
-    all_games = []
+    all_games: List['Game'] = []
     def __init__(self, id, home_team_id, visiting_team_id, home_team, visiting_team, network, time, home_score=None, visiting_score=None, stage=None, stage_display=None, last_updated=None, updated=False) -> None:
         self.id = id
         self.home_team_id = home_team_id
@@ -46,7 +47,7 @@ class Game(AbstractGame):
     def reset_games() -> None:
          Game.all_games = []
 
-    def save(self):
+    def save(self) -> None:
         if self.exists():
             self.update()
             return
@@ -62,7 +63,7 @@ class Game(AbstractGame):
         
         close_connection(conn, cursor)
 
-    def update(self):
+    def update(self) -> None:
         conn, cursor = get_connection()
 
         query = """
@@ -74,7 +75,7 @@ class Game(AbstractGame):
         conn.commit()
         close_connection(conn, cursor)
 
-    def exists(self):
+    def exists(self) -> bool:
         conn, cursor = get_connection()
         query = """SELECT id FROM games where id = '{0}'""".format(self.id)
         cursor.execute(query)

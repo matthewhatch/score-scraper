@@ -1,8 +1,9 @@
 from classes.abstract_team import AbstractTeam
+from typing import List;
 from utils.connection import get_connection, close_connection
 
 class Team(AbstractTeam):
-    all_teams = []
+    all_teams: List['Team'] = []
     def __init__(self, id, display_name, city, mascot, abbr) -> None:
         self.id = id
         self.display_name = display_name
@@ -17,12 +18,12 @@ class Team(AbstractTeam):
         if self.id not in ids:
             Team.all_teams.append(self)
 
-    def find(id):
+    def find(id) -> 'Team':
         for team in Team.all_teams:
             if team.id == id:
                 return team
             
-    def find_by_name(name):
+    def find_by_name(name) -> str:
         conn, cursor = get_connection()
         query = "SELECT id FROM teams where mascot = $${0}$$".format(name)
         cursor.execute(query)
@@ -31,7 +32,7 @@ class Team(AbstractTeam):
         close_connection(conn, cursor)
         return result[0]
     
-    def save(self):
+    def save(self) -> None:
         if self.exists(): return
         
         conn, cursor = get_connection()
@@ -44,7 +45,7 @@ class Team(AbstractTeam):
         conn.commit()
         close_connection(conn, cursor)
     
-    def exists(self):
+    def exists(self) -> bool:
         conn, cursor = get_connection()
         query = """SELECT id FROM teams where id = '{0}'""".format(self.id)
         cursor.execute(query)
@@ -52,6 +53,6 @@ class Team(AbstractTeam):
         close_connection(conn, cursor)
         return result
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.city} {self.mascot}({self.abbr})'
     

@@ -27,3 +27,12 @@ python score_scraper.py --league nhl --loop --wait 30
 # scrape nba score and refresh deafult 15 seconds
 python score_scraper.py -league nba --loop
 ```
+
+tests:
+```shell
+# single run
+python -m unittest discover -s tests/*
+
+# watch files and run tests on changes... like watch
+ls . | entr -c python -m unittest discover -s tests/*
+```

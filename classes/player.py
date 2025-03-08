@@ -1,8 +1,9 @@
 from classes.team import Team
+from typing import List
 from utils.connection import get_connection, close_connection
 
 class Player:
-    all_players = []
+    all_players: List['Player'] = []
     def __init__(self, id, first_name, last_name, team_id, uniform_number) -> None:
         self.id = id
         self.first_name = first_name
@@ -12,7 +13,7 @@ class Player:
         self.team = str(Team.find(team_id))
         Player.all_players.append(self)
 
-    def save(self):
+    def save(self) -> None:
         if self.exists():
             self.update()
             return
@@ -28,7 +29,7 @@ class Player:
         conn.commit()
         close_connection(conn, cursor)
 
-    def update(self):
+    def update(self) -> None:
         conn, cursor = get_connection()
         query = """
             UPDATE players
@@ -40,7 +41,7 @@ class Player:
         conn.commit()
         close_connection(conn, cursor)
 
-    def exists(self):
+    def exists(self) -> bool:
         conn, cursor = get_connection()
         query = "SELECT id FROM players where id = $${}$$".format(self.id)
         cursor.execute(query)
@@ -48,7 +49,7 @@ class Player:
         close_connection(conn, cursor)
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.id} {self.uniform_number} - {self.first_name} {self.last_name} - {self.team_id}'
     
         
